@@ -27,10 +27,14 @@ def download_facebook_video(video_url):
     }
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info_dict = ydl.extract_info(video_url, download=False)
+            info_dict = ydl.extract_info(video_url, download=True)
             filename = ydl.prepare_filename(info_dict)
-            return filename
+            ext = filename.split('.')[-1]
+            new_filename = f"video.{ext}"
+            os.rename(filename, os.path.join(DOWNLOAD_FOLDER, new_filename))
+            return new_filename
     except Exception as e:
+        print(f"Error: {e}")
         return None
 
 @app.route('/', methods=['GET', 'POST'])
