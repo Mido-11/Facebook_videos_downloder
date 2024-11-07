@@ -42,11 +42,11 @@ def index():
         if filename:
             flash(get_translation(language, 'video_fetched_success'), 'success')
             ext = filename.split('.')[-1]
-            return render_template('index.html', language=language, ext=ext, filename=filename)
+            return render_template('index.html', language=language, ext=ext, filename=filename, get_translation=get_translation)
         else:
             flash(get_translation(language, 'fetch_failed'), 'danger')
 
-    return render_template('index.html', language=language)
+    return render_template('index.html', language=language, get_translation=get_translation)
 
 @app.route('/view/<filename>')
 def view_file(filename):
