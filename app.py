@@ -1,60 +1,44 @@
 from flask import Flask, render_template, request, flash, send_file, redirect, url_for
 import yt_dlp
-import json
 import os
+import uuid
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 
+# مسار مجلد التنزيل
 DOWNLOAD_FOLDER = 'downloads'
 os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
 
-# Load translations from JSON file
-with open('translations.json', 'r', encoding='utf-8') as f:
-    translations = json.load(f)
-
-def get_translation(language, key):
-    """Fetches translation based on selected language and key."""
-    return translations.get(language, {}).get(key, key)
-
 def download_facebook_video(video_url):
-    """Downloads video from a given Facebook URL using yt_dlp."""
+    """تنزيل الفيديو من فيسبوك باستخدام yt_dlp."""
+    filename = f"{uuid.uuid4()}.mp4"  # توليد اسم ملف فريد
     ydl_opts = {
         'format': 'best',
         'noplaylist': True,
         'quiet': True,
-        'outtmpl': os.path.join(DOWNLOAD_FOLDER, 'temp_video.%(ext)s'),
+        'outtmpl': os.path.join(DOWNLOAD_FOLDER, filename),
     }
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info_dict = ydl.extract_info(video_url, download=True)
-            filename = ydl.prepare_filename(info_dict)
-            ext = filename.split('.')[-1]
-            new_filename = f"video.{ext}"
-            os.rename(filename, os.path.join(DOWNLOAD_FOLDER, new_filename))
-            return new_filename
+            ydl.download([video_url])
+        return filename
     except Exception as e:
-        print(f"Error: {e}")
+        print(e)
         return None
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    language = request.args.get('lang', 'en')  # Default language is English
     if request.method == 'POST':
         video_url = request.form.get('video_url')
         filename = download_facebook_video(video_url)
         if filename:
-            flash(get_translation(language, 'video_fetched_success'), 'success')
-            ext = filename.split('.')[-1]
-            return render_template('index.html', language=language, ext=ext, filename=filename, get_translation=get_translation)
+            flash("تم جلب الفيديو بنجاح. يمكنك تحميله الآن.", "success")
+            return render_template('index.html', filename=filename)
         else:
-            flash(get_translation(language, 'fetch_failed'), 'danger')
+            flash("فشل في جلب الفيديو. يرجى التحقق من الرابط.", "danger")
 
-    return render_template('index.html', language=language, get_translation=get_translation)
-
-@app.route('/view/<filename>')
-def view_file(filename):
-    return send_file(os.path.join(DOWNLOAD_FOLDER, filename), mimetype='video/mp4')
+    return render_template('index.html')
 
 @app.route('/download/<filename>')
 def download_file(filename):
