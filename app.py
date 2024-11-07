@@ -1,7 +1,5 @@
-from flask import Flask, render_template_string, request, flash, send_file, redirect, url_for
+from flask import Flask, render_template_string, request, flash, send_file
 import yt_dlp
-import io
-from werkzeug.utils import secure_filename
 import os
 
 app = Flask(__name__)
@@ -15,38 +13,26 @@ def download_facebook_video(video_url):
         'format': 'best',
         'noplaylist': True,
         'quiet': True,
-        'outtmpl': 'temp_video.%(ext)s',
+        'outtmpl': os.path.join(DOWNLOAD_FOLDER, 'temp_video.%(ext)s'),
     }
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info_dict = ydl.extract_info(video_url, download=False)
-            video_title = info_dict.get('title', 'Unknown Title')
-            video_uploader = info_dict.get('uploader', 'Unknown Uploader')
-            video_duration = info_dict.get('duration', 0)
-            video_size = info_dict.get('filesize', 0)
-            video_quality = info_dict.get('format', 'Unknown')
-            video_thumbnail = info_dict.get('thumbnail', 'https://via.placeholder.com/150')
-
+            info_dict = ydl.extract_info(video_url, download=True)
             filename = ydl.prepare_filename(info_dict)
-            with open(filename, 'rb') as f:
-                video_data = io.BytesIO(f.read())
-
-            return video_data, filename.split('.')[-1], video_title, video_uploader, video_duration, video_size, video_quality, video_thumbnail
+            return filename, filename.split('.')[-1]
     except Exception as e:
-        return None, None, None, None, None, None, None, None
+        return None, None
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         video_url = request.form.get('video_url')
-        video_data, ext, video_title, video_uploader, video_duration, video_size, video_quality, video_thumbnail = download_facebook_video(video_url)
-        if video_data:
-            flash('Video details fetched successfully!', 'success')
-            video_duration_str = str(video_duration // 60) + 'm ' + str(video_duration % 60) + 's' if video_duration else 'Unknown Duration'
-            video_size_str = f"{video_size / 1048576:.2f} MB" if video_size else 'Unknown Size'
-            return render_template_string(HTML_TEMPLATE, video_title=video_title, video_uploader=video_uploader, video_duration=video_duration_str, video_size=video_size_str, video_quality=video_quality, video_thumbnail=video_thumbnail, ext=ext, video_data=video_data)
+        video_path, ext = download_facebook_video(video_url)
+        if video_path:
+            flash('Video fetched successfully!', 'success')
+            return render_template_string(HTML_TEMPLATE, video_path=video_path, ext=ext)
         else:
-            flash('Failed to fetch the video details. Please check the URL and try again.', 'danger')
+            flash('Failed to fetch the video. Please check the URL and try again.', 'danger')
 
     return render_template_string(HTML_TEMPLATE)
 
@@ -73,7 +59,7 @@ HTML_TEMPLATE = '''
 <body>
     <div class="container">
         <div class="banner">FB Video Downloader</div>
-        <p>Download any Facebook video easily!</p>
+        <p>Download or View any Facebook video easily!</p>
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 <div class="alert alert-{{ messages[0][0] }}" role="alert">
@@ -81,17 +67,12 @@ HTML_TEMPLATE = '''
                 </div>
             {% endif %}
         {% endwith %}
-        {% if video_title %}
+        {% if video_path %}
             <div class="video-info">
-                <h3>{{ video_title }}</h3>
-                <p><strong>Uploader:</strong> {{ video_uploader }}</p>
-                <p><strong>Duration:</strong> {{ video_duration }}</p>
-                <p><strong>Size:</strong> {{ video_size }}</p>
-                <p><strong>Quality:</strong> {{ video_quality }}</p>
-                <img src="{{ video_thumbnail }}" alt="Video Thumbnail" class="video-thumbnail">
+                <h3>Video Ready!</h3>
                 <br>
-                <a href="{{ url_for('download_file', filename='video.' + ext) }}" class="btn btn-custom">Download Video</a>
-                <a href="{{ url_for('view_file', filename='video.' + ext) }}" class="btn btn-custom">View Video</a>
+                <a href="{{ url_for('download_file', filename=video_path.split('/')[-1]) }}" class="btn btn-custom">Download Video</a>
+                <a href="{{ url_for('view_file', filename=video_path.split('/')[-1]) }}" class="btn btn-custom">View Video</a>
             </div>
         {% else %}
             <form action="/" method="POST" class="mt-4">
@@ -111,7 +92,8 @@ HTML_TEMPLATE = '''
 
 @app.route('/view/<filename>')
 def view_file(filename):
-    return send_file(filename, mimetype='video/mp4')
+    file_path = os.path.join(DOWNLOAD_FOLDER, filename)
+    return send_file(file_path, mimetype='video/mp4')
 
 @app.route('/download/<filename>')
 def download_file(filename):
