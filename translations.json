@@ -1,24 +1,26 @@
 {
-  "en": {
-    "title": "Facebook Video Downloader",
-    "description": "Download any Facebook video easily!",
-    "enter_url": "Enter Facebook video URL",
-    "verify_link": "Verify Link",
-    "download": "Download Video",
-    "view": "View Video",
-    "footer": "@powered by Mido",
-    "video_fetched_success": "Video fetched successfully!",
-    "fetch_failed": "Failed to fetch the video. Please check the URL and try again."
-  },
-  "ar": {
-    "title": "تحميل فيديو من فيسبوك",
-    "description": "قم بتنزيل أي فيديو من فيسبوك بسهولة!",
-    "enter_url": "أدخل رابط فيديو فيسبوك",
-    "verify_link": "تحقق من الرابط",
-    "download": "تحميل الفيديو",
-    "view": "مشاهدة الفيديو",
-    "footer": "@مدعوم من ميدو",
-    "video_fetched_success": "تم جلب الفيديو بنجاح!",
-    "fetch_failed": "فشل في جلب الفيديو. الرجاء التحقق من الرابط والمحاولة مرة أخرى."
-  }
+    "en": {
+        "title": "Facebook Video Downloader",
+        "description": "Enter the Facebook video URL to download.",
+        "enter_url": "Enter the video URL",
+        "verify_link": "Verify the Link",
+        "view": "View",
+        "download": "Download Video",
+        "fetch_failed": "Failed to fetch video. Please check the URL.",
+        "video_fetched_success": "Video fetched successfully. You can download it now.",
+        "dark_mode": "Dark Mode",
+        "light_mode": "Light Mode"
+    },
+    "ar": {
+        "title": "محمل فيديوهات فيسبوك",
+        "description": "أدخل رابط الفيديو من فيسبوك لتحميله.",
+        "enter_url": "أدخل رابط الفيديو",
+        "verify_link": "تحقق من الرابط",
+        "view": "عرض",
+        "download": "تحميل الفيديو",
+        "fetch_failed": "فشل في جلب الفيديو. يرجى التحقق من الرابط.",
+        "video_fetched_success": "تم جلب الفيديو بنجاح. يمكنك تحميله الآن.",
+        "dark_mode": "الوضع الداكن",
+        "light_mode": "الوضع الفاتح"
+    }
 }
