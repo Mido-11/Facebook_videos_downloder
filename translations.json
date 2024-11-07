@@ -1,0 +1,20 @@
+{
+  "en": {
+    "title": "Facebook Video Downloader",
+    "description": "Download any Facebook video easily!",
+    "enter_url": "Enter Facebook video URL",
+    "verify_link": "Verify Link",
+    "download": "Download Video",
+    "view": "View Video",
+    "footer": "@powered by Mido"
+  },
+  "ar": {
+    "title": "تحميل فيديو من فيسبوك",
+    "description": "قم بتنزيل أي فيديو من فيسبوك بسهولة!",
+    "enter_url": "أدخل رابط فيديو فيسبوك",
+    "verify_link": "تحقق من الرابط",
+    "download": "تحميل الفيديو",
+    "view": "مشاهدة الفيديو",
+    "footer": "@مدعوم من ميدو"
+  }
+}
