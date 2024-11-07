@@ -7,35 +7,33 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body { font-family: Arial, sans-serif; }
-        .container { max-width: 800px; margin-top: 50px; text-align: center; padding: 20px; border-radius: 8px; }
+        .container { max-width: 600px; margin-top: 50px; text-align: center; padding: 20px; border-radius: 8px; }
         .banner { font-size: 2em; font-weight: bold; color: #3b5998; margin-bottom: 20px; }
         .alert { margin-top: 20px; }
         .dark-mode { background-color: #333; color: white; }
         .light-mode { background-color: #fff; color: black; }
-        .toggle-container { display: flex; align-items: center; justify-content: center; }
-        .toggle { font-size: 2rem; border: .125em solid currentcolor; border-radius: 2em; cursor: pointer; display: block; height: 2em; width: 3.75em; position: relative; }
-        .toggle span { background-color: currentcolor; border-radius: 2em; display: block; height: 1.5em; left: .25em; position: absolute; top: .25em; text-indent: -9999px; transition: left .25s; width: 1.5em; z-index: 2; }
-        .toggle::before, .toggle::after { content: ''; display: block; border-radius: 1em; position: absolute; z-index: 1; }
-        .toggle::after { box-shadow: .25em .25em #5901d8; height: 1.125em; right: .9em; top: .125em; width: 1.125em; }
-        .toggle::before { background-color: #ffc409; height: .625em; outline: .25em dotted #ffc409; outline-offset: .125em; left: .7em; top: .7em; width: .625em; }
-        input:checked ~ .toggle span { left: 2em; }
     </style>
 </head>
 <body class="light-mode">
     <div class="container">
-        <div class="banner">{{ get_translation(language, 'title') }}</div>
+        <!-- Banner -->
+        <h1 class="banner">{{ get_translation(language, 'title') }}</h1>
         <p>{{ get_translation(language, 'description') }}</p>
 
         <!-- Language Toggle -->
-        <div class="toggle-container">
-            <a href="?lang=en" class="btn btn-info">{{ get_translation(language, 'view') }} English</a>
-            <a href="?lang=ar" class="btn btn-info">{{ get_translation(language, 'view') }} العربية</a>
+        <div class="mb-3">
+            <a href="?lang=en" class="btn btn-outline-primary btn-sm">{{ get_translation(language, 'view') }} English</a>
+            <a href="?lang=ar" class="btn btn-outline-primary btn-sm">{{ get_translation(language, 'view') }} العربية</a>
         </div>
 
         <!-- Form to enter video URL -->
-        <form method="POST" class="mt-4">
-            <input type="text" class="form-control" name="video_url" placeholder="{{ get_translation(language, 'enter_url') }}" required>
-            <button type="submit" class="btn btn-primary mt-3">{{ get_translation(language, 'verify_link') }}</button>
+        <form method="POST">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" name="video_url" placeholder="{{ get_translation(language, 'enter_url') }}" required>
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-primary">{{ get_translation(language, 'verify_link') }}</button>
+                </div>
+            </div>
         </form>
 
         <!-- Flash Messages -->
@@ -61,9 +59,9 @@
         {% endif %}
 
         <!-- Dark Mode Toggle -->
-        <div class="toggle-container mt-4">
-            <label for="darkModeToggle" class="btn btn-dark">{{ get_translation(language, 'dark_mode') }}</label>
-            <input type="checkbox" id="darkModeToggle" class="toggle" onclick="document.body.classList.toggle('dark-mode'); document.body.classList.toggle('light-mode');">
+        <div class="form-check form-switch mt-4">
+            <input class="form-check-input" type="checkbox" id="darkModeToggle">
+            <label class="form-check-label" for="darkModeToggle">{{ get_translation(language, 'dark_mode') }}</label>
         </div>
 
         <footer class="mt-5">
@@ -72,14 +70,10 @@
     </div>
 
     <script>
+        // Dark Mode Toggle Script
         document.getElementById('darkModeToggle').addEventListener('change', function() {
-            if (this.checked) {
-                document.body.classList.add('dark-mode');
-                document.body.classList.remove('light-mode');
-            } else {
-                document.body.classList.add('light-mode');
-                document.body.classList.remove('dark-mode');
-            }
+            document.body.classList.toggle('dark-mode', this.checked);
+            document.body.classList.toggle('light-mode', !this.checked);
         });
     </script>
 </body>
