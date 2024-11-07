@@ -8,8 +8,7 @@
         "download": "Download Video",
         "fetch_failed": "Failed to fetch video. Please check the URL.",
         "video_fetched_success": "Video fetched successfully. You can download it now.",
-        "dark_mode": "Dark Mode",
-        "light_mode": "Light Mode"
+        "dark_mode": "Dark Mode"
     },
     "ar": {
         "title": "محمل فيديوهات فيسبوك",
@@ -20,7 +19,6 @@
         "download": "تحميل الفيديو",
         "fetch_failed": "فشل في جلب الفيديو. يرجى التحقق من الرابط.",
         "video_fetched_success": "تم جلب الفيديو بنجاح. يمكنك تحميله الآن.",
-        "dark_mode": "الوضع الداكن",
-        "light_mode": "الوضع الفاتح"
+        "dark_mode": "الوضع الداكن"
     }
 }
