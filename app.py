@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, flash, send_file, redirect, url_for
 import yt_dlp
 import json
-import io
 import os
 
 app = Flask(__name__)
@@ -30,21 +29,20 @@ def download_facebook_video(video_url):
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info_dict = ydl.extract_info(video_url, download=False)
             filename = ydl.prepare_filename(info_dict)
-            with open(filename, 'rb') as f:
-                video_data = io.BytesIO(f.read())
-            return video_data, filename.split('.')[-1]
+            return filename
     except Exception as e:
-        return None, None
+        return None
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     language = request.args.get('lang', 'en')  # Default language is English
     if request.method == 'POST':
         video_url = request.form.get('video_url')
-        video_data, ext = download_facebook_video(video_url)
-        if video_data:
+        filename = download_facebook_video(video_url)
+        if filename:
             flash(get_translation(language, 'video_fetched_success'), 'success')
-            return render_template('index.html', language=language, ext=ext)
+            ext = filename.split('.')[-1]
+            return render_template('index.html', language=language, ext=ext, filename=filename)
         else:
             flash(get_translation(language, 'fetch_failed'), 'danger')
 
@@ -52,7 +50,7 @@ def index():
 
 @app.route('/view/<filename>')
 def view_file(filename):
-    return send_file(filename, mimetype='video/mp4')
+    return send_file(os.path.join(DOWNLOAD_FOLDER, filename), mimetype='video/mp4')
 
 @app.route('/download/<filename>')
 def download_file(filename):
