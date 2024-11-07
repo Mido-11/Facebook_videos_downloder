@@ -38,7 +38,7 @@ def download_facebook_video(video_url):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    language = request.args.get('lang', 'en')
+    language = request.args.get('lang', 'en')  # Default language is English
     if request.method == 'POST':
         video_url = request.form.get('video_url')
         video_data, ext = download_facebook_video(video_url)
