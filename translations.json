@@ -6,7 +6,9 @@
     "verify_link": "Verify Link",
     "download": "Download Video",
     "view": "View Video",
-    "footer": "@powered by Mido"
+    "footer": "@powered by Mido",
+    "video_fetched_success": "Video fetched successfully!",
+    "fetch_failed": "Failed to fetch the video. Please check the URL and try again."
   },
   "ar": {
     "title": "تحميل فيديو من فيسبوك",
@@ -15,6 +17,8 @@
     "verify_link": "تحقق من الرابط",
     "download": "تحميل الفيديو",
     "view": "مشاهدة الفيديو",
-    "footer": "@مدعوم من ميدو"
+    "footer": "@مدعوم من ميدو",
+    "video_fetched_success": "تم جلب الفيديو بنجاح!",
+    "fetch_failed": "فشل في جلب الفيديو. الرجاء التحقق من الرابط والمحاولة مرة أخرى."
   }
 }
