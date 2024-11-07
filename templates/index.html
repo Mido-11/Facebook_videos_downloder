@@ -1,38 +1,64 @@
 <!DOCTYPE html>
-<html lang="{{ 'ar' if translations['language'] == 'اللغة' else 'en' }}">
+<html lang="{{ language }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ translations['title'] }}</title>
+    <title>{{ get_translation(language, 'title') }}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        body { font-family: Arial, sans-serif; transition: background-color 0.5s; }
-        .dark-mode { background-color: #121212; color: white; }
-        .container { max-width: 600px; margin-top: 50px; text-align: center; }
-        .toggle { cursor: pointer; font-size: 1.5em; }
+        body { font-family: Arial, sans-serif; }
+        .container { max-width: 800px; margin-top: 50px; text-align: center; padding: 20px; border-radius: 8px; }
+        .banner { font-size: 2em; font-weight: bold; color: #3b5998; margin-bottom: 20px; }
+        .alert { margin-top: 20px; }
+        .dark-mode { background-color: #333; color: white; }
+        .light-mode { background-color: #fff; color: black; }
+        .toggle-container { display: flex; align-items: center; justify-content: center; }
+        .toggle { font-size: 2rem; border: .125em solid currentcolor; border-radius: 2em; cursor: pointer; display: block; height: 2em; width: 3.75em; position: relative; }
+        .toggle span { background-color: currentcolor; border-radius: 2em; display: block; height: 1.5em; left: .25em; position: absolute; top: .25em; text-indent: -9999px; transition: left .25s; width: 1.5em; z-index: 2; }
+        .toggle::before, .toggle::after { content: ''; display: block; border-radius: 1em; position: absolute; z-index: 1; }
+        .toggle::after { box-shadow: .25em .25em #5901d8; height: 1.125em; right: .9em; top: .125em; width: 1.125em; }
+        .toggle::before { background-color: #ffc409; height: .625em; outline: .25em dotted #ffc409; outline-offset: .125em; left: .7em; top: .7em; width: .625em; }
+        input:checked ~ .toggle span { left: 2em; }
     </style>
 </head>
-<body id="page-body">
+<body class="light-mode">
     <div class="container">
-        <h1>{{ translations['title'] }}</h1>
-        <p>{{ translations['description'] }}</p>
-        <form action="/" method="POST" class="mt-4">
-            <div class="mb-3">
-                <input type="text" name="video_url" class="form-control" placeholder="{{ translations['enter_url'] }}" required>
-            </div>
-            <button type="submit" class="btn btn-primary">{{ translations['verify_link'] }}</button>
-        </form>
-        {% if video_file %}
-            <a href="{{ url_for('download_file', filename=video_file) }}" class="btn btn-success mt-3">{{ translations['download_video'] }}</a>
-        {% endif %}
-        <div class="mt-3">
-            <span class="toggle" onclick="toggleDarkMode()">🌙</span>
+        <div class="banner">{{ get_translation(language, 'title') }}</div>
+        <p>{{ get_translation(language, 'description') }}</p>
+        
+        <!-- Language Toggle -->
+        <div class="toggle-container">
+            <a href="?lang=en" class="btn btn-info">{{ get_translation(language, 'view') }} English</a>
+            <a href="?lang=ar" class="btn btn-info">{{ get_translation(language, 'view') }} العربية</a>
         </div>
+
+        <!-- Form to enter video URL -->
+        <form method="POST" class="mt-4">
+            <input type="text" class="form-control" name="video_url" placeholder="{{ get_translation(language, 'enter_url') }}" required>
+            <button type="submit" class="btn btn-primary mt-3">{{ get_translation(language, 'verify_link') }}</button>
+        </form>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="mt-4">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- Show video if fetched -->
+        {% if ext %}
+        <div class="mt-4">
+            <video controls width="100%">
+                <source src="{{ url_for('view_file', filename='temp_video.' + ext) }}" type="video/{{ ext }}">
+                Your browser does not support the video tag.
+            </video>
+            <a href="{{ url_for('download_file', filename='temp_video.' + ext) }}" class="btn btn-success mt-3">{{ get_translation(language, 'download') }}</a>
+        </div>
+        {% endif %}
     </div>
-    <script>
-        function toggleDarkMode() {
-            document.getElementById('page-body').classList.toggle('dark-mode');
-        }
-    </script>
 </body>
 </html>
