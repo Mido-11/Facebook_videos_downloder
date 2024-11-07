@@ -34,7 +34,7 @@ def download_facebook_video(video_url):
         return None
 
 # Route for selecting language
-@babel.localeselector
+@babel.init_app
 def get_locale():
     return request.accept_languages.best_match(app.config['LANGUAGES'])
 
